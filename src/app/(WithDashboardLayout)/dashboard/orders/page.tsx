@@ -1,12 +1,12 @@
 "use client"
 
-import { Button } from "@/src/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
-import { Input } from "@/src/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Input } from "@/components/ui/input"
 import { Search, Filter } from "lucide-react"
-import { useAuth } from "@/src/components/auth/auth-provider"
-import { OrderCard } from "@/src/components/dashboard/order-card"
-import { CustomerOrderCard } from "@/src/components/dashboard/customer-order-card"
+import { useAuth } from "@/context/auth/auth-provider"
+import { OrderCard } from "@/components/dashboard/order-card"
+import { CustomerOrderCard } from "@/components/dashboard/customer-order-card"
 
 export default function OrdersPage() {
   const { user } = useAuth()

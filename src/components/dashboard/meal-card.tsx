@@ -1,6 +1,6 @@
-import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { MoreHorizontal, Edit, Trash, Eye } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/src/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu"
 
 interface MealCardProps {
   title: string

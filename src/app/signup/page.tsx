@@ -5,59 +5,70 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/src/components/auth/auth-provider"
-import { Button } from "@/src/components/ui/button"
-import { Input } from "@/src/components/ui/input"
-import { Label } from "@/src/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
+import { useAuth } from "@/context/auth/auth-provider"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Utensils } from "lucide-react"
+import { registerUser } from "@/services/AuthServices"
+import { toast } from "sonner"
 
 export default function SignupPage() {
   const router = useRouter()
-  const { signup } = useAuth()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
-  const [activeTab, setActiveTab] = useState("customer")
+  const [role, setRole] = useState("customer")
+
+  const { user } = useAuth();
+
+  if (user) {
+    router.push("/dashboard");
+    return;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setIsSubmitting(true)
     setError("")
 
     if (password !== confirmPassword) {
       setError("Passwords do not match")
-      setIsLoading(false)
+      setIsSubmitting(false)
       return
     }
 
+    const toastId = toast.loading("Creating account...");
     try {
-      await signup(name, email, password, activeTab as "customer" | "provider")
-      router.push("/dashboard")
+      await registerUser({ name, email, password, role });
+      toast.success("Account created successfully.", { id: toastId })
+      router.push("/login")
     } catch (err) {
       setError("Failed to create account")
+      toast.error("Failed to create account.", { id: toastId })
     } finally {
-      setIsLoading(false)
+      setIsSubmitting(false)
     }
   }
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <Link href="/" className="absolute left-4 top-4 md:left-8 md:top-8 flex items-center">
-        <Utensils className="h-6 w-6 text-primary" />
-        <span className="ml-2 text-lg font-bold">NutriMeal</span>
+    <div className="container flex h-screen w-screen flex-col items-center justify-center space-y-20">
+      <Link href="/" className=" flex items-center text-5xl">
+        <Utensils className="h-12 w-12 text-primary" />
+        <span className="ml-2 font-bold">NutriMeal</span>
       </Link>
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
           <p className="text-sm text-muted-foreground">Enter your information to create an account</p>
         </div>
-        <Tabs defaultValue="customer" className="w-full" onValueChange={setActiveTab}>
+        <Tabs defaultValue="customer" className="w-full" onValueChange={setRole}>
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="customer">Customer</TabsTrigger>
+            <TabsTrigger value="customer">User</TabsTrigger>
             <TabsTrigger value="provider">Meal Provider</TabsTrigger>
           </TabsList>
           <TabsContent value="customer">
@@ -106,8 +117,8 @@ export default function SignupPage() {
                     />
                   </div>
                   {error && <p className="text-sm text-destructive">{error}</p>}
-                  <Button type="submit" disabled={isLoading}>
-                    {isLoading ? "Creating account..." : "Create Account"}
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? "Creating account..." : "Create Account"}
                   </Button>
                 </div>
               </form>
@@ -159,8 +170,8 @@ export default function SignupPage() {
                     />
                   </div>
                   {error && <p className="text-sm text-destructive">{error}</p>}
-                  <Button type="submit" disabled={isLoading}>
-                    {isLoading ? "Creating account..." : "Create Account"}
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? "Creating account..." : "Create Account"}
                   </Button>
                 </div>
               </form>

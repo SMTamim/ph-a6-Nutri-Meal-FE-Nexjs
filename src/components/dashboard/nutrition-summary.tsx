@@ -1,6 +1,6 @@
 "use client"
 
-import { Card } from "@/src/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { useEffect, useRef } from "react"
 
 export function NutritionSummary() {

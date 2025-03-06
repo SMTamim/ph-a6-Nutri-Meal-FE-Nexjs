@@ -2,16 +2,25 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useAuth } from "@/src/components/auth/auth-provider"
-import { Button } from "@/src/components/ui/button"
+import { useAuth } from "@/context/auth/auth-provider"
+import { Button } from "@/components/ui/button"
 import { Calendar, ChevronRight, Home, LogOut, Menu, ShoppingBag, User, Utensils, X } from "lucide-react"
 import { useState } from "react"
+import { logoutUser } from "@/services/AuthServices"
+import { useRouter } from "next/navigation"
 
 export function DashboardSidebar() {
   const { user, logout } = useAuth()
   const pathname = usePathname()
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
+  const handleLogout = async () => {
+    await logoutUser();
+    logout();
+    router.push("/dashboard");
+
+  }
   const links = [
     { href: "/dashboard", label: "Overview", icon: Home },
     { href: "/dashboard/meal-plans", label: "Meal Planner", icon: Calendar },
@@ -31,9 +40,8 @@ export function DashboardSidebar() {
         {isOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
       </Button>
       <div
-        className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-background transition-transform duration-300 ease-in-out md:translate-x-0 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-background transition-transform duration-300 ease-in-out md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex h-full flex-col border-r">
           <div className="flex h-14 items-center border-b px-4">
@@ -52,9 +60,8 @@ export function DashboardSidebar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${
-                      isActive ? "bg-accent text-white" : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    }`}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${isActive ? "bg-accent text-white" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }`}
                   >
                     <Icon className="h-4 w-4" />
                     <span className="font-medium">{link.label}</span>
@@ -64,7 +71,7 @@ export function DashboardSidebar() {
             </nav>
           </div>
           <div className="border-t p-4">
-            <Button variant="outline" className="w-full justify-start" onClick={logout}>
+            <Button variant="outline" className="w-full justify-start hover:bg-red-500" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               <span className="font-medium">Logout</span>
             </Button>

@@ -1,5 +1,5 @@
 import type React from "react"
-import { DashboardSidebar } from "@/src/components/dashboard/sidebar"
+import { DashboardSidebar } from "@/components/dashboard/sidebar"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 

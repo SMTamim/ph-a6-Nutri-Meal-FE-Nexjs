@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Button } from "@/src/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { ChevronRight, Utensils, Calendar, Clock, Heart } from "lucide-react"
 
 export default function Home() {

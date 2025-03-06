@@ -1,10 +1,10 @@
 "use client"
 
-import { Button } from "@/src/components/ui/button"
-import { Card, CardContent } from "@/src/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Calendar } from "lucide-react"
-import { UpcomingMealCard } from "@/src/components/dashboard/upcoming-meal-card"
-import { MacroProgress } from "@/src/components/dashboard/macro-progress"
+import { UpcomingMealCard } from "@/components/dashboard/upcoming-meal-card"
+import { MacroProgress } from "@/components/dashboard/macro-progress"
 
 export function CustomerDashboard() {
   const days = [

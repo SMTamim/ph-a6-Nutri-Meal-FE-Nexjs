@@ -1,133 +1,130 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/src/components/auth/auth-provider"
-import { Button } from "@/src/components/ui/button"
-import { Input } from "@/src/components/ui/input"
-import { Label } from "@/src/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { useAuth } from "@/context/auth/auth-provider"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Utensils } from "lucide-react"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { useState } from "react"
+import { loginValidationSchema } from "./loginValidationSchema"
+import { toast } from "sonner"
+import { loginUser } from "@/services/AuthServices"
+
+// Form validation schema
+
+type FormValues = z.infer<typeof loginValidationSchema>
 
 export default function LoginPage() {
   const router = useRouter()
-  const { login } = useAuth()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [authError, setAuthError] = useState("")
+  
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirectPath')
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+  // Initialize react-hook-form
+  const form = useForm<FormValues>({
+    resolver: zodResolver(loginValidationSchema),
+    defaultValues: {
+      email: "tamimmahmud0@gmail.com",
+      password: "securepassword",
+    },
+  })
+
+  const [isSubmitting, setIsSubmitting] = useState(form.formState.isSubmitting);
+  const { user, setIsLoading } = useAuth();
+  if (user) router.push("/dashboard");
+
+  const onSubmit = async (data: FormValues) => {
+    setIsSubmitting(true);
+    const toastId = toast.loading("Logging in...")
 
     try {
-      await login(email, password)
-      router.push("/dashboard")
+      const res = await loginUser(data);
+      if (res?.success) {
+        setIsLoading(true);
+        toast.success("Successfully logged in.", { id: toastId })
+        router.push(redirect || "/dashboard");
+      }
     } catch (err) {
-      setError("Invalid email or password")
-    } finally {
-      setIsLoading(false)
+      setAuthError("Invalid email or password")
+      toast.error("Failed logged in.", { id: toastId })
+      setIsSubmitting(false);
     }
   }
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <Link href="/" className="absolute left-4 top-4 md:left-8 md:top-8 flex items-center">
-        <Utensils className="h-6 w-6 text-primary" />
-        <span className="ml-2 text-lg font-bold">NutriMeal</span>
+    <div className="container flex h-screen w-screen flex-col items-center justify-center space-y-20">
+      <Link href="/" className=" flex items-center text-5xl">
+        <Utensils className="h-12 w-12 text-primary" />
+        <span className="ml-2 font-bold">NutriMeal</span>
       </Link>
+
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
           <p className="text-sm text-muted-foreground">Enter your email to sign in to your account</p>
         </div>
-        <Tabs defaultValue="customer" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="customer">Customer</TabsTrigger>
-            <TabsTrigger value="provider">Meal Provider</TabsTrigger>
-          </TabsList>
-          <TabsContent value="customer">
-            <div className="grid gap-4">
-              <form onSubmit={handleSubmit}>
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
                     <Input
-                      id="email"
                       placeholder="name@example.com"
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
+                      {...field}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Password</FormLabel>
+                    <Link href="/forgot-password" className="text-sm text-primary underline-offset-4 hover:underline">
+                      Forgot password?
+                    </Link>
                   </div>
-                  <div className="grid gap-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password">Password</Label>
-                      <Link href="/forgot-password" className="text-sm text-primary underline-offset-4 hover:underline">
-                        Forgot password?
-                      </Link>
-                    </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  {error && <p className="text-sm text-destructive">{error}</p>}
-                  <Button type="submit" disabled={isLoading}>
-                    {isLoading ? "Signing in..." : "Sign In"}
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </TabsContent>
-          <TabsContent value="provider">
-            <div className="grid gap-4">
-              <form onSubmit={handleSubmit}>
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="provider-email">Email</Label>
-                    <Input
-                      id="provider-email"
-                      placeholder="provider@example.com"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="provider-password">Password</Label>
-                      <Link href="/forgot-password" className="text-sm text-primary underline-offset-4 hover:underline">
-                        Forgot password?
-                      </Link>
-                    </div>
-                    <Input
-                      id="provider-password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-                  {error && <p className="text-sm text-destructive">{error}</p>}
-                  <Button type="submit" disabled={isLoading}>
-                    {isLoading ? "Signing in..." : "Sign In"}
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </TabsContent>
-        </Tabs>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {authError && <p className="text-sm text-destructive">{authError}</p>}
+
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Signing in..." : "Sign In"}
+            </Button>
+          </form>
+        </Form>
+
         <p className="px-8 text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}
           <Link href="/signup" className="underline underline-offset-4 hover:text-primary">
@@ -138,4 +135,3 @@ export default function LoginPage() {
     </div>
   )
 }
-

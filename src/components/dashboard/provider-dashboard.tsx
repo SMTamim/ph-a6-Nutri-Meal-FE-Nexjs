@@ -1,11 +1,11 @@
 "use client"
 
-import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DollarSign, ShoppingBag, Utensils, Users } from "lucide-react"
 import Link from "next/link"
-import { OrderCard } from "@/src/components/dashboard/order-card"
+import { OrderCard } from "@/components/dashboard/order-card"
 
 export function ProviderDashboard() {
   return (

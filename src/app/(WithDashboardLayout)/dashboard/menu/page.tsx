@@ -1,11 +1,11 @@
 "use client"
 
-import { Button } from "@/src/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
-import { Input } from "@/src/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Input } from "@/components/ui/input"
 import { Search, Plus, Filter } from "lucide-react"
 import Link from "next/link"
-import { MealCard } from "@/src/components/dashboard/meal-card"
+import { MealCard } from "@/components/dashboard/meal-card"
 
 export default function MenuPage() {
   return (
