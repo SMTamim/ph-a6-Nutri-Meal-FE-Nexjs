@@ -44,8 +44,8 @@ export default function LoginPage() {
   })
 
   const [isSubmitting, setIsSubmitting] = useState(form.formState.isSubmitting);
-  const { user, setIsLoading } = useAuth();
-  if (user) {
+  const { user, isLoading, setIsLoading } = useAuth();
+  if (!isLoading && user) {
     router.push("/dashboard");
     return;
   };

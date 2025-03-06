@@ -3,7 +3,7 @@ export interface IApiResponse<T> {
   statusCode: number;
   message: string;
   data?: T;
-  error?: any
+  error?: any;
 }
 
 export interface ILoginData {
@@ -14,4 +14,16 @@ export interface ILoginData {
 export interface IRegistrationData {
   token: string;
   refreshToken: string;
+}
+export interface IUserData {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  address: string;
+  isBlocked: boolean;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
