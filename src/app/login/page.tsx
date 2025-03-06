@@ -30,7 +30,7 @@ type FormValues = z.infer<typeof loginValidationSchema>
 export default function LoginPage() {
   const router = useRouter()
   const [authError, setAuthError] = useState("")
-  
+
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirectPath')
 
@@ -45,7 +45,10 @@ export default function LoginPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(form.formState.isSubmitting);
   const { user, setIsLoading } = useAuth();
-  if (user) router.push("/dashboard");
+  if (user) {
+    router.push("/dashboard");
+    return;
+  };
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -57,10 +60,12 @@ export default function LoginPage() {
         setIsLoading(true);
         toast.success("Successfully logged in.", { id: toastId })
         router.push(redirect || "/dashboard");
+      } else {
+        throw new Error(res?.message)
       }
-    } catch (err) {
+    } catch (err: any) {
       setAuthError("Invalid email or password")
-      toast.error("Failed logged in.", { id: toastId })
+      toast.error(err.message || "Failed logged in.", { id: toastId })
       setIsSubmitting(false);
     }
   }

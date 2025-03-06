@@ -1,6 +1,6 @@
 "use server";
 
-import { IApiResponse, IAuthData } from "@/types/apiResponse.types";
+import { IApiResponse, ILoginData, IRegistrationData } from "@/types/apiResponse.types";
 import { cookies } from "next/headers";
 import { FieldValues } from "react-hook-form";
 import { jwtDecode } from "jwt-decode";
@@ -16,7 +16,7 @@ export const registerUser = async (userData: FieldValues) => {
       body: JSON.stringify(userData)
     });
     const result = await res.json();
-    return result;
+    return result as IApiResponse<IRegistrationData>;
   } catch (error) {
     console.log(error);
   }
@@ -31,7 +31,7 @@ export const loginUser = async (loginData: FieldValues) => {
       },
       body: JSON.stringify(loginData)
     });
-    const result = (await res.json()) as IApiResponse<IAuthData>;
+    const result = (await res.json()) as IApiResponse<ILoginData>;
     if (result.success) {
       const cookieStore = await cookies();
       cookieStore.set("refreshToken", result.data?.refreshToken!);

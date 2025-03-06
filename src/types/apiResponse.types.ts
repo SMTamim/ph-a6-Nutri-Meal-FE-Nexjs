@@ -3,9 +3,15 @@ export interface IApiResponse<T> {
   statusCode: number;
   message: string;
   data?: T;
+  error?: any
 }
 
-export interface IAuthData {
+export interface ILoginData {
+  token: string;
+  refreshToken: string;
+}
+
+export interface IRegistrationData {
   token: string;
   refreshToken: string;
 }

@@ -31,7 +31,8 @@ export const middleware = async (request: NextRequest) => {
     }
   }
   // 🚨 Block unauthorized access 🚨
-  return NextResponse.redirect(new URL(`/dashboard/${user.role}`, request.url));
+  const role = user.role === "customer" ? "user" : "provider";
+  return NextResponse.redirect(new URL(`/dashboard/${role}`, request.url));
 };
 
 export const config = {
